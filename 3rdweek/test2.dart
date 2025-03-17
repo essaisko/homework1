@@ -90,10 +90,6 @@ class Game {
           character.defend();
         }
 
-        print("\n현재 상태:");
-        character.showStatus();
-        monster.showStatus();
-
         if (monster.health > 0) {
           print("\n${monster.name}의 턴");
           monster.attackCharacter(character);
@@ -118,6 +114,9 @@ class Game {
         } while (input != 'y' && input != 'n');
         if (input == 'n') break;
       }
+    }
+    if (monsters.isEmpty) {
+      print("\n🎉 축하합니다! 모든 몬스터를 물리쳤습니다! 🎉");
     }
     print("게임 종료! 승리한 몬스터 수: $defeatedMonsters");
     saveGameResult();
