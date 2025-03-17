@@ -1,1 +1,4 @@
-golem,20,5
+slime,20,5
+pig,30,7
+mushroom,40,10
+golem,50,15
