@@ -77,7 +77,12 @@ class Game {
         print("\n${character.name}의 턴 (1: 공격, 2: 방어)");
         character.showStatus();
         monster.showStatus();
-        String? input = stdin.readLineSync();
+        String input;
+        do {
+          print("1 또는 2를 입력하세요.");
+          input = stdin.readLineSync() ?? '';
+        } while (input != '1' && input != '2');
+
         if (input == '1') {
           character.attackMonster(monster);
         } else {
@@ -96,8 +101,12 @@ class Game {
       }
 
       if (character.health > 0 && monsters.isNotEmpty) {
-        print("다음 몬스터와 싸우시겠습니까? (y/n)");
-        if (stdin.readLineSync()?.toLowerCase() != 'y') break;
+        String input;
+        do {
+          print("다음 몬스터와 싸우시겠습니까? (y/n)");
+          input = stdin.readLineSync()?.toLowerCase() ?? '';
+        } while (input != 'y' && input != 'n');
+        if (input == 'n') break;
       }
     }
     print("게임 종료! 승리한 몬스터 수: $defeatedMonsters");
@@ -105,9 +114,13 @@ class Game {
   }
 
   void saveGameResult() {
-    print("결과를 저장하시겠습니까? (y/n)");
-    String? input = stdin.readLineSync();
-    if (input?.toLowerCase() == 'y') {
+    String input;
+    do {
+      print("결과를 저장하시겠습니까? (y/n)");
+      input = stdin.readLineSync()?.toLowerCase() ?? '';
+    } while (input != 'y' && input != 'n');
+
+    if (input == 'y') {
       String result = character.health > 0 ? "승리" : "패배";
       String content =
           "캐릭터: ${character.name}, 남은 체력: ${character.health}, 결과: $result";
