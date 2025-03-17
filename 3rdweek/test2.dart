@@ -81,7 +81,6 @@ class Game {
         print("행동을 선택하세요 (1: 공격, 2: 방어):");
         String input;
         do {
-          print("1 또는 2를 입력하세요.");
           input = stdin.readLineSync() ?? '';
         } while (input != '1' && input != '2');
 
@@ -91,9 +90,17 @@ class Game {
           character.defend();
         }
 
+        print("\n현재 상태:");
+        character.showStatus();
+        monster.showStatus();
+
         if (monster.health > 0) {
           print("\n${monster.name}의 턴");
           monster.attackCharacter(character);
+
+          print("\n현재 상태:");
+          character.showStatus();
+          monster.showStatus();
         }
       }
 
