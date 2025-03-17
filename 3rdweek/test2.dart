@@ -72,13 +72,10 @@ class Game {
     while (character.health > 0 && monsters.isNotEmpty) {
       var monster = getRandomMonster();
       print("\n새로운 몬스터가 나타났습니다!");
-      print("\n${monster.name}의 정보:");
       monster.showStatus();
 
       while (character.health > 0 && monster.health > 0) {
         print("\n${character.name}의 턴 (1: 공격, 2: 방어)");
-        character.showStatus();
-        monster.showStatus();
         String input;
         do {
           print("1 또는 2를 입력하세요.");
@@ -156,7 +153,6 @@ void main() {
   Character player = Character(
       name, int.parse(stats[0]), int.parse(stats[1]), int.parse(stats[2]));
 
-  print("캐릭터 정보:");
   player.showStatus();
 
   Game game = Game(player);
