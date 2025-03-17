@@ -18,7 +18,8 @@ class Character {
     int damage = item ? attack * 2 : attack;
 
     // 몬스터 회피 확률을 체크하여 공격 여부 결정
-    if (Random().nextInt(100) < monster.evasionChance) {
+    int randomChance = Random().nextInt(100);
+    if (randomChance < monster.evasionChance) {
       print("\n${monster.name}이(가) ${name}의 공격을 회피했습니다!");
       return;
     }
