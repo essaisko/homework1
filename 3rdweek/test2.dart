@@ -25,12 +25,8 @@ class Character {
   }
 
   void useItem() {
-    if (!itemUsed) {
-      itemUsed = true;
-      print("\n아이템 사용! 이번 턴 공격력이 두 배로 증가합니다.");
-    } else {
-      print("\n이미 아이템을 사용했습니다.");
-    }
+    itemUsed = true;
+    print("\n아이템 사용! 이번 턴 공격력이 두 배로 증가합니다.");
   }
 }
 
@@ -91,7 +87,7 @@ class Game {
   void provideBonusHealth() {
     if (Random().nextInt(100) < 30) {
       character.health += 10;
-      print('보너스 체력을 얻었습니다! 현재 체력: \${character.health}');
+      print('보너스 체력을 얻었습니다! 현재 체력: ${character.health}');
     }
   }
 
@@ -102,6 +98,8 @@ class Game {
       var monster = getRandomMonster();
       print("\n새로운 몬스터가 나타났습니다!");
       monster.showStatus();
+
+      character.itemUsed = false;
 
       while (character.health > 0 && monster.health > 0) {
         print("\n${character.name}의 턴");
@@ -120,8 +118,8 @@ class Game {
             character.useItem();
             character.attackMonster(monster, item: true);
           } else {
-            print("\n아이템을 이미 사용하여 일반 공격으로 대체됩니다.");
-            character.attackMonster(monster);
+            print("\n아이템을 이미 사용했습니다. 다른 행동을 선택하세요.");
+            continue;
           }
         }
 
@@ -162,7 +160,7 @@ class Game {
     print("결과를 저장하시겠습니까? (y/n)");
     var input = stdin.readLineSync()?.toLowerCase();
     if (input == 'y') {
-      String result = character.health > 0 ? "승리" : "패배"; // 여기에 변수 선언 추가
+      String result = character.health > 0 ? "승리" : "패배";
       String content =
           "${character.name}님의 게임 결과: $result (체력: ${character.health})";
       File('result.txt').writeAsStringSync(content);
@@ -171,30 +169,30 @@ class Game {
       print("게임 결과 저장을 취소했습니다.");
     }
   }
+}
 
-  void main() {
-    String name = getCharacterName();
-    final file = File('characters.txt');
-    var stats = file.readAsStringSync().split(',');
-    Character player = Character(
-        name, int.parse(stats[0]), int.parse(stats[1]), int.parse(stats[2]));
-
-    player.showStatus();
-    Game game = Game(player);
-    game.loadMonsters();
-    game.battle();
-  }
-
-  String getCharacterName() {
-    while (true) {
-      print("캐릭터의 이름을 입력하세요:");
-      String? name = stdin.readLineSync();
-      if (name != null &&
-          name.isNotEmpty &&
-          RegExp(r'^[a-zA-Z가-힣]+$').hasMatch(name)) {
-        return name;
-      }
-      print("이름은 한글 또는 영문만 가능합니다. 다시 입력해주세요.");
+String getCharacterName() {
+  while (true) {
+    print("캐릭터의 이름을 입력하세요:");
+    String? name = stdin.readLineSync();
+    if (name != null &&
+        name.isNotEmpty &&
+        RegExp(r'^[a-zA-Z가-힣]+\$').hasMatch(name)) {
+      return name;
     }
+    print("이름은 한글 또는 영문만 가능합니다. 다시 입력해주세요.");
   }
+}
+
+void main() {
+  String name = getCharacterName();
+  final file = File('characters.txt');
+  var stats = file.readAsStringSync().split(',');
+  Character player = Character(
+      name, int.parse(stats[0]), int.parse(stats[1]), int.parse(stats[2]));
+
+  player.showStatus();
+  Game game = Game(player);
+  game.loadMonsters();
+  game.battle();
 }
