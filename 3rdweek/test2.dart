@@ -1,48 +1,74 @@
 import 'dart:io';
 import 'dart:math';
 
-// 캐릭터 클래스
+// 캐릭터 클래스 정의
 class Character {
-  String name;
-  int health, attack, defense;
-  bool itemUsed = false; // 아이템 사용 여부 확인
+  String name; // 캐릭터 이름
+  int health; // 캐릭터의 체력
+  int attack; // 캐릭터의 공격력
+  int defense; // 캐릭터의 방어력
+  bool itemUsed = false; // 아이템 사용 여부를 체크하는 변수
 
+  // 캐릭터 생성자
   Character(this.name, this.health, this.attack, this.defense);
 
+  // 몬스터 공격 메서드
   void attackMonster(Monster monster, {bool item = false}) {
+    // 아이템 사용 시 공격력이 두 배
     int damage = item ? attack * 2 : attack;
+
+    // 몬스터 회피 확률을 체크하여 공격 여부 결정
+    if (Random().nextInt(100) < monster.evasionChance) {
+      print("\n${monster.name}이(가) ${name}의 공격을 회피했습니다!");
+      return;
+    }
+
+    // 몬스터의 방어력을 고려한 실제 데미지 계산
     damage = max(damage - monster.defense, 0);
     monster.health -= damage;
     print("\n$name이(가) ${monster.name}에게 $damage의 피해를 입혔습니다.");
   }
 
+  // 방어 메서드
   void defend() {
     print("\n$name이(가) 방어 태세를 취하여 0 만큼 체력을 잃었습니다.");
   }
 
+  // 캐릭터 상태 출력 메서드
   void showStatus() {
     print("$name - 체력: $health, 공격력: $attack, 방어력: $defense");
   }
 
+  // 아이템 사용 메서드
   void useItem() {
     itemUsed = true;
     print("\n아이템 사용! 이번 턴 공격력이 두 배로 증가합니다.");
   }
 }
 
-// 몬스터 클래스
+// 몬스터 클래스 정의
 class Monster {
-  String name;
-  int health, attack, defense = 0, turnCount = 0;
+  String name; // 몬스터 이름
+  int health; // 몬스터 체력
+  int attack; // 몬스터 공격력
+  int defense = 0; // 몬스터 방어력 (기본값 0)
+  int turnCount = 0; // 방어력 증가를 위한 턴 카운터
+  int evasionChance; // 몬스터의 회피 확률
 
-  Monster(this.name, this.health, int attackMax) : attack = max(attackMax, 5);
+  // 몬스터 생성자
+  Monster(this.name, this.health, int attackMax)
+      : attack = max(attackMax, 5),
+        evasionChance = Random().nextInt(10) + 1; // 1~10% 회피 확률 랜덤 설정
 
+  // 캐릭터 공격 메서드
   void attackCharacter(Character character) {
+    // 캐릭터의 방어력을 고려한 실제 데미지 계산
     int damage = max(attack - character.defense, 0);
     character.health -= damage;
     print("\n$name이(가) ${character.name}에게 $damage의 피해를 입혔습니다.");
   }
 
+  // 3턴마다 몬스터의 방어력 증가 메서드
   void increaseDefense() {
     turnCount++;
     if (turnCount % 3 == 0) {
@@ -51,19 +77,23 @@ class Monster {
     }
   }
 
+  // 몬스터 상태 출력 메서드
   void showStatus() {
-    print("$name - 체력: $health, 공격력: $attack, 방어력: $defense");
+    print(
+        "$name - 체력: $health, 공격력: $attack, 방어력: $defense, 회피율: $evasionChance%");
   }
 }
 
-// 게임 클래스
+// 게임 클래스 정의
 class Game {
-  Character character;
-  List<Monster> monsters = [];
-  int defeatedMonsters = 0;
+  Character character; // 플레이어 캐릭터 인스턴스
+  List<Monster> monsters = []; // 게임에서 사용할 몬스터 리스트
+  int defeatedMonsters = 0; // 처치한 몬스터 수
 
+  // 게임 생성자
   Game(this.character);
 
+  // 파일에서 몬스터 정보 로드
   void loadMonsters() {
     try {
       final file = File('monsters.txt');
@@ -80,10 +110,12 @@ class Game {
     }
   }
 
+  // 무작위 몬스터 선택 메서드
   Monster getRandomMonster() {
     return monsters[Random().nextInt(monsters.length)];
   }
 
+  // 게임 시작 시 30% 확률로 캐릭터 체력 보너스 부여 메서드
   void provideBonusHealth() {
     if (Random().nextInt(100) < 30) {
       character.health += 10;
@@ -91,6 +123,7 @@ class Game {
     }
   }
 
+  // 전투 진행 메서드
   void battle() {
     provideBonusHealth();
 
@@ -99,6 +132,7 @@ class Game {
       print("\n새로운 몬스터가 나타났습니다!");
       monster.showStatus();
 
+      // 전투마다 아이템 사용 여부 초기화
       character.itemUsed = false;
 
       while (character.health > 0 && monster.health > 0) {
@@ -141,21 +175,16 @@ class Game {
       }
 
       if (character.health > 0 && monsters.isNotEmpty) {
-        String input;
-        do {
-          print("\n다음 몬스터와 싸우시겠습니까? (y/n)");
-          input = stdin.readLineSync()?.toLowerCase() ?? '';
-        } while (input != 'y' && input != 'n');
-        if (input == 'n') break;
+        print("\n다음 몬스터와 싸우시겠습니까? (y/n)");
+        var input = stdin.readLineSync()?.toLowerCase() ?? '';
+        if (input != 'y') break;
       }
-    }
-    if (monsters.isEmpty) {
-      print("\n🎉 축하합니다! 모든 몬스터를 물리쳤습니다! 🎉");
     }
     print("게임 종료! 승리한 몬스터 수: $defeatedMonsters");
     saveGameResult(character);
   }
 
+  // 게임 결과 저장 메서드
   void saveGameResult(Character character) {
     print("결과를 저장하시겠습니까? (y/n)");
     var input = stdin.readLineSync()?.toLowerCase();
@@ -171,6 +200,31 @@ class Game {
   }
 }
 
+void main() {
+  String name = getCharacterName();
+
+  // 캐릭터 데이터를 characters.txt 파일에서 로드
+  final file = File('characters.txt');
+  var stats = file.readAsStringSync().split(',');
+
+  // 캐릭터 인스턴스 생성
+  Character player = Character(
+    name,
+    int.parse(stats[0]),
+    int.parse(stats[1]),
+    int.parse(stats[2]),
+  );
+
+  player.showStatus(); // 캐릭터 상태 출력
+
+  // 게임 인스턴스 생성 및 몬스터 로드
+  Game game = Game(player);
+  game.loadMonsters();
+
+  // 게임 전투 시작
+  game.battle();
+}
+
 String getCharacterName() {
   while (true) {
     print("캐릭터의 이름을 입력하세요:");
@@ -182,17 +236,4 @@ String getCharacterName() {
     }
     print("이름은 한글 또는 영문만 가능합니다. 다시 입력해주세요.");
   }
-}
-
-void main() {
-  String name = getCharacterName();
-  final file = File('characters.txt');
-  var stats = file.readAsStringSync().split(',');
-  Character player = Character(
-      name, int.parse(stats[0]), int.parse(stats[1]), int.parse(stats[2]));
-
-  player.showStatus();
-  Game game = Game(player);
-  game.loadMonsters();
-  game.battle();
 }
