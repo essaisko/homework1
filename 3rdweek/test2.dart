@@ -155,46 +155,46 @@ class Game {
       print("\n🎉 축하합니다! 모든 몬스터를 물리쳤습니다! 🎉");
     }
     print("게임 종료! 승리한 몬스터 수: $defeatedMonsters");
-    saveGameResult();
+    saveGameResult(character);
   }
 
-  void saveGameResult() {
+  void saveGameResult(Character character) {
     print("결과를 저장하시겠습니까? (y/n)");
     var input = stdin.readLineSync()?.toLowerCase();
     if (input == 'y') {
-      String result = character.health > 0 ? "승리" : "패배";
+      String result = character.health > 0 ? "승리" : "패배"; // 여기에 변수 선언 추가
       String content =
-          "캐릭터: \${character.name}, 남은 체력: \${character.health}, 결과: \$result";
+          "${character.name}님의 게임 결과: $result (체력: ${character.health})";
       File('result.txt').writeAsStringSync(content);
       print("게임 결과가 result.txt에 저장되었습니다.");
     } else {
       print("게임 결과 저장을 취소했습니다.");
     }
   }
-}
 
-void main() {
-  String name = getCharacterName();
-  final file = File('characters.txt');
-  var stats = file.readAsStringSync().split(',');
-  Character player = Character(
-      name, int.parse(stats[0]), int.parse(stats[1]), int.parse(stats[2]));
+  void main() {
+    String name = getCharacterName();
+    final file = File('characters.txt');
+    var stats = file.readAsStringSync().split(',');
+    Character player = Character(
+        name, int.parse(stats[0]), int.parse(stats[1]), int.parse(stats[2]));
 
-  player.showStatus();
-  Game game = Game(player);
-  game.loadMonsters();
-  game.battle();
-}
+    player.showStatus();
+    Game game = Game(player);
+    game.loadMonsters();
+    game.battle();
+  }
 
-String getCharacterName() {
-  while (true) {
-    print("캐릭터의 이름을 입력하세요:");
-    String? name = stdin.readLineSync();
-    if (name != null &&
-        name.isNotEmpty &&
-        RegExp(r'^[a-zA-Z가-힣]+$').hasMatch(name)) {
-      return name;
+  String getCharacterName() {
+    while (true) {
+      print("캐릭터의 이름을 입력하세요:");
+      String? name = stdin.readLineSync();
+      if (name != null &&
+          name.isNotEmpty &&
+          RegExp(r'^[a-zA-Z가-힣]+$').hasMatch(name)) {
+        return name;
+      }
+      print("이름은 한글 또는 영문만 가능합니다. 다시 입력해주세요.");
     }
-    print("이름은 한글 또는 영문만 가능합니다. 다시 입력해주세요.");
   }
 }
