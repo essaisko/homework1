@@ -71,7 +71,9 @@ class Game {
   void battle() {
     while (character.health > 0 && monsters.isNotEmpty) {
       var monster = getRandomMonster();
-      print("새로운 몬스터 ${monster.name}가 나타났습니다!");
+      print("\n새로운 몬스터가 나타났습니다!");
+      print("\n${monster.name}의 정보:");
+      monster.showStatus();
 
       while (character.health > 0 && monster.health > 0) {
         print("\n${character.name}의 턴 (1: 공격, 2: 방어)");
@@ -147,10 +149,15 @@ String getCharacterName() {
 
 void main() {
   String name = getCharacterName();
+  print("\n게임을 시작합니다!\n");
+
   final file = File('characters.txt');
   var stats = file.readAsStringSync().split(',');
   Character player = Character(
       name, int.parse(stats[0]), int.parse(stats[1]), int.parse(stats[2]));
+
+  print("캐릭터 정보:");
+  player.showStatus();
 
   Game game = Game(player);
   game.loadMonsters();
