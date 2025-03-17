@@ -192,9 +192,9 @@ String getCharacterName() {
     String? name = stdin.readLineSync();
     if (name != null &&
         name.isNotEmpty &&
-        RegExp(r'^[a-zA-Z가-힣]+\$').hasMatch(name)) {
+        RegExp(r'^[a-zA-Z가-힣]+$').hasMatch(name)) {
       return name;
     }
-    print("⚠️ 올바른 이름을 입력하세요! (한글, 영문 대소문자만 가능)");
+    print("이름은 한글 또는 영문만 가능합니다. 다시 입력해주세요.");
   }
 }
