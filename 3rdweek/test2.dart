@@ -9,12 +9,13 @@ class Character {
   Character(this.name, this.health, this.attack, this.defense);
 
   void attackMonster(Monster monster) {
-    monster.health -= attack;
-    print("$name이(가) ${monster.name}에게 $attack의 피해를 입혔습니다.");
+    int damage = attack;
+    monster.health -= damage;
+    print("\n$name이(가) ${monster.name}에게 $damage의 피해를 입혔습니다.");
   }
 
   void defend() {
-    print("$name이(가) 방어 태세를 취해 피해를 줄였습니다.");
+    print("\n$name이(가) 방어 태세를 취하여 0 만큼 체력을 잃었습니다.");
   }
 
   void showStatus() {
@@ -32,7 +33,7 @@ class Monster {
   void attackCharacter(Character character) {
     int damage = max(attack - character.defense, 0);
     character.health -= damage;
-    print("$name이(가) ${character.name}에게 $damage의 피해를 입혔습니다.");
+    print("\n$name이(가) ${character.name}에게 $damage의 피해를 입혔습니다.");
   }
 
   void showStatus() {
@@ -72,10 +73,12 @@ class Game {
     while (character.health > 0 && monsters.isNotEmpty) {
       var monster = getRandomMonster();
       print("\n새로운 몬스터가 나타났습니다!");
-      monster.showStatus();
+      print(
+          "\n${monster.name} - 체력: ${monster.health}, 공격력: ${monster.attack}");
 
       while (character.health > 0 && monster.health > 0) {
-        print("\n${character.name}의 턴 (1: 공격, 2: 방어)");
+        print("\n${character.name}의 턴");
+        print("행동을 선택하세요 (1: 공격, 2: 방어):");
         String input;
         do {
           print("1 또는 2를 입력하세요.");
@@ -89,12 +92,13 @@ class Game {
         }
 
         if (monster.health > 0) {
+          print("\n${monster.name}의 턴");
           monster.attackCharacter(character);
         }
       }
 
       if (monster.health <= 0) {
-        print("${monster.name}을(를) 물리쳤습니다!");
+        print("\n${monster.name}을(를) 물리쳤습니다!");
         monsters.remove(monster);
         defeatedMonsters++;
       }
@@ -102,7 +106,7 @@ class Game {
       if (character.health > 0 && monsters.isNotEmpty) {
         String input;
         do {
-          print("다음 몬스터와 싸우시겠습니까? (y/n)");
+          print("\n다음 몬스터와 싸우시겠습니까? (y/n)");
           input = stdin.readLineSync()?.toLowerCase() ?? '';
         } while (input != 'y' && input != 'n');
         if (input == 'n') break;
@@ -153,6 +157,7 @@ void main() {
   Character player = Character(
       name, int.parse(stats[0]), int.parse(stats[1]), int.parse(stats[2]));
 
+  print("\n캐릭터 정보:");
   player.showStatus();
 
   Game game = Game(player);
