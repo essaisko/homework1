@@ -101,12 +101,39 @@ class Game {
       }
     }
     print("게임 종료! 승리한 몬스터 수: $defeatedMonsters");
+    saveGameResult();
+  }
+
+  void saveGameResult() {
+    print("결과를 저장하시겠습니까? (y/n)");
+    String? input = stdin.readLineSync();
+    if (input?.toLowerCase() == 'y') {
+      String result = character.health > 0 ? "승리" : "패배";
+      String content =
+          "캐릭터: ${character.name}, 남은 체력: ${character.health}, 결과: $result";
+      File('result.txt').writeAsStringSync(content);
+      print("게임 결과가 result.txt에 저장되었습니다.");
+    } else {
+      print("게임 결과 저장을 취소했습니다.");
+    }
+  }
+}
+
+String getCharacterName() {
+  while (true) {
+    print("캐릭터의 이름을 입력하세요:");
+    String? name = stdin.readLineSync();
+    if (name != null &&
+        name.isNotEmpty &&
+        RegExp(r'^[a-zA-Z가-힣]+$').hasMatch(name)) {
+      return name;
+    }
+    print("⚠️ 올바른 이름을 입력하세요! (한글, 영문 대소문자만 가능)");
   }
 }
 
 void main() {
-  print("캐릭터의 이름을 입력하세요:");
-  String name = stdin.readLineSync()!;
+  String name = getCharacterName();
   final file = File('characters.txt');
   var stats = file.readAsStringSync().split(',');
   Character player = Character(
