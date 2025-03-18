@@ -56,24 +56,33 @@ class Game {
 
       while (character.health > 0 && monster.health > 0) {
         print("\n${character.name}의 턴");
-        print("행동을 선택하세요 (1: 공격, 2: 방어, 3: 아이템 사용):");
         String input;
-        do {
+
+        // 올바른 입력을 받을 때까지 반복
+        while (true) {
+          print("행동을 선택하세요 (1: 공격, 2: 방어, 3: 아이템 사용):");
           input = stdin.readLineSync() ?? '';
-        } while (!['1', '2', '3'].contains(input));
+
+          if (!['1', '2', '3'].contains(input)) {
+            print("잘못된 입력입니다. 다시 입력해주세요.\n");
+            continue;
+          }
+
+          if (input == '3' && character.itemUsed) {
+            print("\n아이템을 이미 사용했습니다. 다른 행동을 선택하세요.\n");
+            continue;
+          }
+
+          break; // 올바른 입력일 때 반복문 탈출
+        }
 
         if (input == '1') {
           character.attackMonster(monster);
         } else if (input == '2') {
           character.defend();
         } else if (input == '3') {
-          if (!character.itemUsed) {
-            character.useItem();
-            character.attackMonster(monster, item: true);
-          } else {
-            print("\n아이템을 이미 사용했습니다. 다른 행동을 선택하세요.");
-            continue;
-          }
+          character.useItem();
+          character.attackMonster(monster, item: true);
         }
 
         if (monster.health > 0) {
@@ -94,19 +103,18 @@ class Game {
       }
 
       if (character.health > 0 && monsters.isNotEmpty) {
-        print("\n다음 몬스터와 싸우시겠습니까? (y/n)");
-        var input = stdin.readLineSync()?.toLowerCase() ?? '';
-        if (input != 'y') break;
+        var input = getYesNoInput("\n다음 몬스터와 싸우시겠습니까? (y/n)");
+        if (input == 'n') break;
       }
     }
+
     print("게임 종료! 승리한 몬스터 수: $defeatedMonsters");
     saveGameResult(character);
   }
 
-  // 게임 결과 저장 메서드
+// 게임 결과 저장 메서드
   void saveGameResult(Character character) {
-    print("결과를 저장하시겠습니까? (y/n)");
-    var input = stdin.readLineSync()?.toLowerCase();
+    var input = getYesNoInput("결과를 저장하시겠습니까? (y/n)");
     if (input == 'y') {
       String result = character.health > 0 ? "승리" : "패배";
       String content =
@@ -116,5 +124,18 @@ class Game {
     } else {
       print("게임 결과 저장을 취소했습니다.");
     }
+  }
+
+  String getYesNoInput(String message) {
+    String? input;
+    do {
+      print(message);
+      input = stdin.readLineSync()?.toLowerCase();
+      if (input != 'y' && input != 'n') {
+        print("잘못된 입력입니다. 다시 입력해주세요.");
+      }
+    } while (input != 'y' && input != 'n');
+
+    return input!;
   }
 }
