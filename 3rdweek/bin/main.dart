@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'Character.dart';
-import 'Game.dart';
+import '../lib/Character.dart';
+import '../lib/Game.dart';
 
 // 게임 클래스 정의
 
