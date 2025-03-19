@@ -15,7 +15,7 @@ class Game {
   // 파일에서 몬스터 정보 로드
   void loadMonsters() {
     try {
-      final file = File('monsters.txt');
+      final file = File('../lib/monsters.txt');
       final lines = file.readAsLinesSync();
       for (var line in lines) {
         var data = line.split(',');

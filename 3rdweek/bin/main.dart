@@ -8,7 +8,7 @@ void main() {
   String name = getCharacterName();
 
   // 캐릭터 데이터를 characters.txt 파일에서 로드
-  final file = File('characters.txt');
+  final file = File('../lib/characters.txt');
   var stats = file.readAsStringSync().split(',');
 
   // 캐릭터 인스턴스 생성
