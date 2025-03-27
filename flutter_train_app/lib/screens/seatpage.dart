@@ -173,10 +173,21 @@ class _SeatPageState extends State<SeatPage> {
                                 CupertinoDialogAction(
                                   child: const Text("확인"),
                                   onPressed: () {
-                                    // ✅ 다이얼로그 닫고 → 이전 두 화면으로 이동
+                                    // ✅ 예매 완료 다이얼로그 닫기
                                     Navigator.of(ctx).pop();
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pop();
+
+                                    // ✅ 홈으로 이동
+                                    Navigator.of(context)
+                                        .popUntil((route) => route.isFirst);
+
+                                    // ✅ 예매 완료 메시지 출력
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text('예매 완료! 좌석: $reservedText'),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
                                   },
                                 ),
                               ],
