@@ -1,11 +1,11 @@
-// seat_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// ✅ 좌석 선택 페이지 - 출발역과 도착역을 받아서 좌석을 선택하고 예매하는 기능을 제공
+/// ✅ 좌석 선택 페이지: 출발역과 도착역 정보를 받아 좌석을 선택하고 예매하는 UI
 class SeatPage extends StatefulWidget {
-  final String departureStation; // 선택된 출발역 이름
-  final String arrivalStation; // 선택된 도착역 이름
+  // ✅ 출발역과 도착역은 이 위젯이 만들어질 때 꼭 전달받아야 함 (required)
+  final String departureStation;
+  final String arrivalStation;
 
   const SeatPage({
     super.key,
@@ -18,32 +18,35 @@ class SeatPage extends StatefulWidget {
 }
 
 class _SeatPageState extends State<SeatPage> {
-  final Set<String> selectedSeats = {}; // 사용자가 선택한 좌석들을 저장하는 Set
+  /// ✅ 사용자가 선택한 좌석을 저장할 Set
+  /// - Set은 중복이 허용되지 않는 자료구조
+  /// - String 형태의 좌석 ID 저장 (예: A1, B2 등)
+  final Set<String> selectedSeats = {};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: const Text('좌석 선택'),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context), // 뒤로가기 버튼
+          onPressed: () => Navigator.pop(context), // 이전 화면으로 돌아감
         ),
       ),
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 16),
-            _buildRouteHeader(), // 🔽 출발역 → 도착역 표시
+            _buildRouteHeader(), // 🔽 출발 → 도착 표시
             const SizedBox(height: 12),
-            _buildLegend(), // 🔽 좌석 상태(선택됨/선택안됨) 설명
+            _buildLegend(), // 🔽 좌석 상태 설명 (선택됨/안됨)
             const SizedBox(height: 10),
-            _buildSeatCount(), // 🔽 현재 선택된 좌석 개수 출력
+            _buildSeatCount(), // 🔽 현재 선택 좌석 개수 표시
             const SizedBox(height: 20),
-            _buildSeatLabels(), // 🔽 상단 열 라벨 (A, B, C, D)
+            _buildSeatLabels(), // 🔽 A~D 열 표시
             const SizedBox(height: 20),
-            Expanded(child: _buildSeatGrid()), // 🔽 좌석 배치 리스트뷰
+            Expanded(child: _buildSeatGrid()), // 🔽 좌석 목록
             const SizedBox(height: 10),
             _buildBookingButton(context), // 🔽 예매 버튼
             const SizedBox(height: 10),
@@ -53,7 +56,7 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  /// 🔽 출발역 → 도착역 텍스트 표시 위젯
+  /// ✅ [출발역 → 도착역] 정보 표시
   Widget _buildRouteHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -75,7 +78,7 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  /// 🔽 좌석 상태 표시 (선택됨 / 선택안됨)
+  /// ✅ 좌석 상태(선택됨 / 선택안됨) 안내 UI
   Widget _buildLegend() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -84,14 +87,14 @@ class _SeatPageState extends State<SeatPage> {
         const SizedBox(width: 4),
         const Text('선택됨'),
         const SizedBox(width: 20),
-        _legendBox(Colors.grey[300]!),
+        _legendBox(Colors.grey),
         const SizedBox(width: 4),
         const Text('선택안됨'),
       ],
     );
   }
 
-  /// 🔽 현재 선택된 좌석 개수 표시
+  /// ✅ 선택된 좌석 개수 표시
   Widget _buildSeatCount() {
     return Text(
       '선택된 좌석: ${selectedSeats.length}개',
@@ -99,7 +102,7 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  /// 🔽 좌석 열 라벨 (A, B, C, D)
+  /// ✅ A~D 열 라벨 표시
   Widget _buildSeatLabels() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -108,7 +111,7 @@ class _SeatPageState extends State<SeatPage> {
         const SizedBox(width: 4),
         _seatLabel('B'),
         const SizedBox(width: 16),
-        _seatLabel(''),
+        _seatLabel(''), // 가운데 공간
         const SizedBox(width: 16),
         _seatLabel('C'),
         const SizedBox(width: 4),
@@ -117,10 +120,10 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  /// 🔽 실제 좌석 버튼 구성 (20줄)
+  /// ✅ 좌석 배치 (20줄 × A~D)
   Widget _buildSeatGrid() {
     return ListView.builder(
-      itemCount: 20,
+      itemCount: 20, // 총 20줄
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemBuilder: (context, index) {
         final row = index + 1;
@@ -145,7 +148,7 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  /// 🔽 예매 버튼 (선택 좌석 없으면 비활성화)
+  /// ✅ 예매 버튼 - 선택된 좌석이 있어야 활성화됨
   Widget _buildBookingButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -171,12 +174,13 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  /// 🔽 예매 확인 다이얼로그
+  /// ✅ 예매 확인 다이얼로그 (Cupertino 스타일)
   void _confirmBooking(BuildContext context) {
     final reserved = selectedSeats.toList()
       ..sort((a, b) {
-        final letterCompare = a[0].compareTo(b[0]);
-        if (letterCompare != 0) return letterCompare;
+        // 알파벳 → 숫자 순 정렬
+        final compareLetter = a[0].compareTo(b[0]);
+        if (compareLetter != 0) return compareLetter;
         return int.parse(a.substring(1)).compareTo(int.parse(b.substring(1)));
       });
 
@@ -212,9 +216,10 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  /// 🔽 좌석 버튼 위젯
+  /// ✅ 좌석 하나에 대한 버튼
   Widget _seatButton(String seatId) {
     final isSelected = selectedSeats.contains(seatId);
+
     return SizedBox(
       width: 50,
       height: 50,
@@ -229,7 +234,7 @@ class _SeatPageState extends State<SeatPage> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.purple : Colors.grey[300]!,
+            color: isSelected ? Colors.purple : Colors.grey[300],
             borderRadius: BorderRadius.circular(8),
           ),
         ),
@@ -237,15 +242,17 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  /// 🔽 좌석 라벨 (A, B, C, D 등)
-  Widget _seatLabel(String label) =>
-      _squareBox(Text(label, style: const TextStyle(fontSize: 18)));
+  /// ✅ 열 라벨 위젯 (A, B, C, D)
+  Widget _seatLabel(String label) => _squareBox(
+        Text(label, style: const TextStyle(fontSize: 18)),
+      );
 
-  /// 🔽 행 번호 라벨 (1~20)
-  Widget _rowNumberLabel(String number) =>
-      _squareBox(Text(number, style: const TextStyle(fontSize: 18)));
+  /// ✅ 줄 번호 라벨 (1~20)
+  Widget _rowNumberLabel(String number) => _squareBox(
+        Text(number, style: const TextStyle(fontSize: 18)),
+      );
 
-  /// 🔽 좌석 상태 박스
+  /// ✅ 색상 박스 (좌석 상태용)
   Widget _legendBox(Color color) => Container(
         width: 24,
         height: 24,
@@ -253,7 +260,7 @@ class _SeatPageState extends State<SeatPage> {
             BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)),
       );
 
-  /// 🔽 좌석 및 라벨을 감싸는 사각형 박스 (50x50)
+  /// ✅ 50x50 정사각형 박스에 자식 위젯 넣기
   Widget _squareBox(Widget child) => SizedBox(
         width: 50,
         height: 50,

@@ -1,4 +1,4 @@
-# flutter_train_app
+# holdem_timer
 
 A new Flutter project.
 
